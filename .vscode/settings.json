@@ -1,3 +1,4 @@
 {
-    "editor.tabSize": 5
+    "editor.tabSize": 5,
+    "editor.fontFamily": "poppins, 'Fira code', 'cascadia code', monospace"
 }

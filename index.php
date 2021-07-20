@@ -1,20 +1,45 @@
 <?php
 require_once 'dbconnect.php';
 
-// if (isset($_POST['current-question'])) {
 
+if (isset($_POST['current-question'])) {
+  $currentQues = $_POST['current-question'];
+  if (isset($_POST['answer'])) {
+    $answer = intval($_POST['answer']);
+    var_dump($answer);
+
+    try {
+
+      $req = $bdd->prepare("SELECT * FROM questions 
+                                                WHERE q_id = ?
+                                              ");
+      $req->execute([$currentQues]);
+      $result = $req->fetchAll();
+      // var_dump($result);
+
+    } catch (PDOException $e) {
+      echo $e->getMessage();
+    }
+  }
+}
+
+
+try {
 
   $req = $bdd->prepare("SELECT * FROM questions 
-                                            WHERE q_isActive = '1' 
-                                            ORDER BY 'q_rank' 
-                                            LIMIT 1
+                                              WHERE q_isActive = '1' 
+                                              ORDER BY 'q_rank' 
+                                              LIMIT 1
                                             ");
   $req->execute();
   $questions = $req->fetchAll();
-  
-  $req = $bdd
+  // var_dump($questions);
 
-// }
+
+  // }
+} catch (PDOException $e) {
+  echo $e->getMessage();
+}
 
 ?>
 
@@ -37,9 +62,8 @@ require_once 'dbconnect.php';
   <div class="container">
     <h1>Quizz</h1>
 
-
-    
-    <!-- <?php if ($correct == $_POST['answer'][$id]) { ?>
+    <?php if ($currentQues && ($answer === $result['q_correct_ans'])) { ?>
+      <?php var_dump($result['q_correct_ans']) ?>
       <div id="answer-result" class="alert alert-success">
         <i class="fas fa-thumbs-up"></i> <?= "Bravo, c'était la bonne réponse !"; ?>
       </div>
@@ -47,11 +71,11 @@ require_once 'dbconnect.php';
       <div id="answer-result" class="alert alert-danger">
         <i class="fas fa-thumbs-down"></i> <?= "Hé non! La bonne réponse était "; ?> <strong></strong>
       </div>
-    <?php } ?> -->
+    <?php } ?>
 
-    <?php foreach ($questions as $ques): ?>
+    <?php foreach ($questions as $ques) : ?>
       <h2 class="mt-4">Question n°<span id="question-id"><?= $ques['q_rank']; ?></span></h2>
-      <form id="question-form" method="post">
+      <form id="question-form" method="POST">
         <p id="current-question-text" class="question-text"><?= $ques['q_content']; ?></p>
         <div id="answers" class="d-flex flex-column">
 
